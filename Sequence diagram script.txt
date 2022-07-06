@@ -1,0 +1,39 @@
+title Football API X Imsea 
+
+participant User
+participant Server
+participant Football API
+participant imsea API
+
+note over User:user's browser requests \nthe root site
+
+User->(1)Server:GET /\nHost: localhost:3000/
+
+User(1)<-Server:200 OK + index.html (form to fill out)
+
+note over User:user fills out form and \nprovides data (season)
+
+User->(1)Server:GET /Search?Season=2020 \nHost:localhost3000/
+
+note over Server:Server makes an API call to \nFootballAPI to get the top scorer \ndata for the user's defined season (2020)
+
+Server->(1)Football API:GET /players/topscorers?league=78&season=2020 \nHost: https://v3.football.api-sports.io
+
+note over Football API:Football API authenticates the server's \nAPI key that came with the request, and \ngenerates a JSON object as a response
+
+Football API->(1)Server: 200 OK \nand the JSON object containing season's data
+
+note over Server:server parses the object to \nextract the player's name and \nother details
+
+
+note over Server:Server makes an API call to \nimsea to get the player's picture
+
+Server->(1)imsea API:GET /api/1?q=${playerName} \nHost: imsea.herokuapp.com
+
+note over imsea API:imsea is a public API so it simply validates \nthe syntax of the request and provides results 
+
+Server(1)<-imsea API:200 OK \nand the JSON object containing image search results
+
+note over Server:Server parses results
+
+User(1)<-Server:200 OK \n Delivers the results of the user's query
