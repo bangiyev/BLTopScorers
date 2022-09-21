@@ -66,7 +66,7 @@ function request_handler(req, res){
     Here I declare the endpoint for the football API. I appended the season value to the proper location on there.
     Then, I used an https.get request on that endpoint, and provided my API key along with it.
 
-    footballAPI_request.once is a one timie listener for the response event and its callback is the process_stream function you provided in an earlier demo.
+    footballAPI_request.once is a one time listener for the response event and its callback is the process_stream function you provided in an earlier demo.
 
 */
 
@@ -133,11 +133,10 @@ function parse_footballAPI(body, season, res){
     The second call to process_stream worked the same as before, but its callback is the parse_imseaAPI function this time.
     imsea provides links to images stored in an array of a json object, so i just stored the first link that comes up in the imsea_object field
 
-    finally now that i have the image I send it back to the client with res.end().
+    Finally now that i have the image, I send it back to the client with res.end().
     Also, I passed along some fields from the first API request. I stored the playername and stats so I can use them here when its time to invoke res.end.
     It's just to provide a few more details along with the picture.
 
-    Regarding input resiliancy: (professors if statement from an earlier demo) & my if statement in parse_footballAPI
 */
 
 function parse_imseaAPI(body, playerName, stats, res){
@@ -151,34 +150,3 @@ function parse_imseaAPI(body, playerName, stats, res){
     res.end(showImage);
 }
 
-/*
-
-    Failed attempt at caching. Leaving it here for a future struggle.
-
-let responseCache = [];
-
-function cacheData(responseObject, season){
-    responseCache.push({season, responseObject});
-}
-
-function handleCached(indexedObject, res){
-    let responseObject = indexedObject.responseObject
-    let playerName = responseObject?.response[0]?.player?.firstname + ' ' + responseObject?.response[0]?.player?.lastname;
-    let playerAge = responseObject?.response[0]?.player?.age;
-    let playerNat = responseObject?.response[0]?.player?.nationality;
-    let playerTeam = responseObject?.response[0]?.statistics[0]?.team?.name;
-    let playerLeague = responseObject?.response[0]?.statistics[0]?.league?.name;
-    let gamesPlayed = responseObject?.response[0]?.statistics[0]?.games?.appearences;
-    let goals = responseObject?.response[0]?.statistics[0]?.goals?.total;
-    let assists = responseObject?.response[0]?.statistics[0]?.goals?.assists;
-    res.writeHead(200, {"Content-Type": "text/html"});
-    let stats =`<p>Age: ${playerAge}<br>Nationality: ${playerNat}<br>Team: ${playerTeam}<br>League: ${playerLeague}<br>Games Played: ${gamesPlayed}<br>
-    Goals Scored: ${goals}<br>Assists: ${assists}</p>`;
-    res.write(`<h1>${playerName}:</h1><u1>Season Stats: ${stats}</u1>`);    
-
-    const imsea_endpoint = `https://imsea.herokuapp.com/api/1?q=${playerName}`;
-    const imsea_request = https.get(imsea_endpoint);
-
-    imsea_request.once("response", stream => process_stream(stream, parse_imseaAPI, res));
-}
-*/
